@@ -13,9 +13,6 @@ var currentHour = moment().format("H");
 // makesure schedule items in an empty array. 
 var scheduleItems = []; 
 
-// add Schedule Items 
-
-
 
 function startSchedule (){
 
@@ -40,8 +37,28 @@ function startSchedule (){
 
 localStorage.setItem("event", JSON.stringify(scheduleItems));
 
-console.log(scheduleItems)
+// console.log(scheduleItems)
 }
+
+function main (){
+
+      addSchedule();
+
+      startSchedule();
+
+      colorTimeBlocks();
+
+// add event listners for these funcitons 
+
+//when user clicks add save it to local storage 
+
+// 
+
+}
+
+
+
+// add the data that user created to the html 
 
 function addSchedule (){
 
@@ -54,13 +71,16 @@ function addSchedule (){
       for (let i = 0; i < scheduleItems.length; index++) {
             var scheduleHour = scheduleItems[i].hour; 
             var itemText = scheduleItems[i].text ;
+            // step 1 - target the correct element. 
+             // check that these items match schedule time
+           var alignTime =  $(`[data-hour="${scheduleHour}"` )[0]
+
+            //append to the dom element 
+           var textarea = $(alignTime).children("textarea")[0]
+           $(textarea).text(itemText);
       }
-
       
-
-
-      
-      }
+}
 
 
  
@@ -87,4 +107,4 @@ function colorTimeBlocks () {
 
 }
 
-
+$(document).ready(main) 
