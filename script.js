@@ -1,5 +1,5 @@
 // define jquery variables 
-var $timeBlock = $('.time-block')
+var $timeBlock = $('.time-segment')
 var $currentDay = $('#currentDay'); 
 var $scheduleArea = $(".schedule");
 
@@ -30,66 +30,19 @@ function startSchedule (){
          }   
 
       scheduleItems.push(scheduleobj);
+
       });
-
-
 //once we have looped thru timeblocks, save this array of objects to local storage by stringifying it first 
 
 localStorage.setItem("event", JSON.stringify(scheduleItems));
 
 // console.log(scheduleItems)
-}
+};
 
-function main (){
-
-      addSchedule();
-
-      startSchedule();
-
-      colorTimeBlocks();
-
-// add event listners for these funcitons 
-
-//when user clicks add save it to local storage 
-
-// 
-
-}
-
-
-
-// add the data that user created to the html 
-
-function addSchedule (){
-
-      var scheduleItems = storage.getItem("events"); 
-      var scheduleItems = JSON.parse(scheduleItems);
-      
-      
-      // for loop to loop through shcedule items 
-      
-      for (let i = 0; i < scheduleItems.length; index++) {
-            var scheduleHour = scheduleItems[i].hour; 
-            var itemText = scheduleItems[i].text ;
-            // step 1 - target the correct element. 
-             // check that these items match schedule time
-           var alignTime =  $(`[data-hour="${scheduleHour}"` )[0]
-
-            //append to the dom element 
-           var textarea = $(alignTime).children("textarea")[0]
-           $(textarea).text(itemText);
-      }
-      
-}
-
-
- 
-
-// create a function to colour timeblocks based on shcedule 
- 
+//chabe time blocks depending on time 
 function colorTimeBlocks () {
 
-      $timeBlock.each(function (){
+            $timeBlock.each(function (){
             var $thisSegment = $(this);
             var thisSegmentHr = parseInt($thisSegment.attr("data-hour"));
 
@@ -98,13 +51,75 @@ function colorTimeBlocks () {
             }
 
             if(thisSegmentHr < currentHour){
-            $this.addClass("past").removeClass("future present ")
+            $thisSegment.addClass("past").removeClass(" present future ")
             }
             if(thisSegmentHr > currentHour){
-            $this.addClass("future").removeClass("past present")
+            $thisSegment.addClass("future").removeClass("past present")
             }
-      })
+      });
 
 }
 
-$(document).ready(main) 
+function addSchedule (){
+
+      var scheduleItems = localStorage.getItem("event"); 
+      var scheduleItems = JSON.parse(scheduleItems);
+      
+      
+      // for loop to loop through shcedule items 
+      
+      for (let i = 0; i < scheduleItems.length; i++) {
+
+            var scheduleHour = scheduleItems[i].hour; 
+            var itemText = scheduleItems[i].text ;
+
+            // step 1 - target the correct element. 
+             // check that these items match schedule time
+
+           var alignTime =  $(`[data-hour="${scheduleHour}"` )[0]
+
+            //append to the dom element 
+           var textarea = $(alignTime).children("textarea")[0]
+           $(textarea).text(itemText);
+      }
+
+
+      
+}
+
+// create a function to colour timeblocks based on shcedule 
+ 
+       function saveEvent(){
+            var $thisBlock = $(this).parent(); 
+
+            var hourToUpdate = $thisBlock.attr("data-hour"); 
+            var itemToAdd =  $thisBlock.children("textarea").val(); 
+
+            for (var j = 0; j < scheduleItems.length; j++) {
+                  if (scheduleItems[j].hour === hourToUpdate) {
+            
+                         scheduleItems[j].text = itemToAdd
+            
+                  }
+            }
+
+            localStorage.setItem("event", JSON.stringify(scheduleItems));
+            addSchedule();
+            }
+
+//   Final Fucntion to put together all the peices 
+
+$(document).ready(function(){
+
+      colorTimeBlocks(); 
+
+      if(!localStorage.getItem("events")){
+      startSchedule(); 
+      }
+
+      $currentDay.text(currentDate)
+      addSchedule();
+      $scheduleArea.on("click", "button", saveEvent )
+
+
+}); 
